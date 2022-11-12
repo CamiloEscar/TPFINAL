@@ -1,5 +1,4 @@
 unit Fecha_Final;
-{$codepage utf8}
 
 interface // Parte pública, que se comparte
 

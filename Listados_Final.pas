@@ -1,124 +1,110 @@
 unit Listados_Final;
-{$codepage utf8}
 
-interface // Parte pública, que se comparte
+interface 
 
 uses
 	crt,
 	ABMC_Final,Configuracion_Final;
 
 const
-	ruta_Per='personas.dat'; // ubicacion del archivo
-	ruta_E='estadisticas.dat'; // ubicacion del archivo
-	ruta_Est='Estancias.dat'; // ubicacion del archivo
+	ruta_Per='personas.dat'; 
+	ruta_Est='Estancias.dat'; 
 
 var
 	archivo_est:fichero_est;
 
 procedure menu_listados;
 
-implementation // Parte privada de la unit
+implementation 
 
-
-// Procedimiento del Menú de Listados
 procedure menu_listados;
 var
 	opcion:char;
 	aux_condicion,encontrado:boolean;
 	aux_denominacion:string;
-	codigo_estancia:byte;
+	codigo_provincia:byte;
 	ubicacion:integer;
 
 begin
-	TextColor(7); // Cambia color de Texto
-	TextBackground(3); // Cambia color de Fondo
+	TextColor(7); 
+	TextBackground(3); 
 
 	assign(archivo_per, ruta_Per); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
 	reset(archivo_per); // reset: abre un fichero para lectura.
 	orden_burbuja_I_Apellido (archivo_per); // ordenda los registros por Apellido
-	close (archivo_per); // cierra el archivo
+	close (archivo_per); 
 
 
 	repeat
-		clrscr; // Limpia la pantalla
+		clrscr; 
 		writeln ('------------------------------------------');
 		writeln ('-             menu Listados              -');
 		writeln ('------------------------------------------');
 		writeln ('- Elija una opción                       -');
 		writeln ('------------------------------------------');
-		writeln ('- 1 - ESTANCIAS                          -');
+		writeln ('- 1 - Lista de estancias                 -');
 		writeln ('------------------------------------------');
-		writeln ('- Estancias Totales                      -');
+		writeln ('- 2 - Lista de estancias con piscina      ');
 		writeln ('------------------------------------------');
-		writeln ('- 2 - Correctos                          -');
-		writeln ('- 3 - Carga Incorrecta                   -');
+		writeln ('- 3 - Estancias por provincia            -');
 		writeln ('------------------------------------------');
-		writeln ('- 4 - Personas por Estancia              -');
+		writeln ('- 4 - Volver al Menu Principal           -');
 		writeln ('------------------------------------------');
-		writeln ('- 5 - Volver al Menu Principal           -');
-		writeln ('------------------------------------------');
-		opcion:= readkey; // Toma la opción con solo teclear 
+		opcion:= readkey; 
 
 		Case opcion of
 			'1': begin
 					assign(archivo_est, ruta_Est); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
+					assign(archivo_per, ruta_Per);
 					reset(archivo_est); // reset: abre un fichero para lectura.
+					reset(archivo_per);
 					listar_est (archivo_est); // Procedimiento para listar las provincias
-					cerrar_archivo_est (archivo_est); // Cierra el archivo
+					//mostrar_registro_per(reg:personas);
+					cerrar_archivo_est (archivo_est);
+					//cerrar_archivo_per (archivo_per);  
 					writeln ('');
 					writeln ('Pulse una tecla para continuar');
 					readkey;
 				end;
 			'2': begin
-					aux_condicion:=true; // Muestra los que están OK
-					assign(archivo_per, ruta_Per); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
-					reset(archivo_per); // reset: abre un fichero para lectura.
-					listar_I (archivo_per,aux_condicion); // muestra la lista de todos los intectados true
-					close (archivo_per); // Cierra el archivo
+					assign(archivo_est, ruta_Est); 
+					reset(archivo_est); 
+					listar_pil (archivo_est); // Procedimiento para listar las estancias con pileta
+					cerrar_archivo_est (archivo_est); 
 					writeln ('');
-					writeln ('Presione un tecla para volver al menu.');
+					writeln ('Pulse una tecla para continuar');
 					readkey;
 				end;
 			'3': begin
-					aux_condicion:=false; // Muestra los que están dados de Baja
-					assign(archivo_per, ruta_Per); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
-					reset(archivo_per); // reset: abre un fichero para lectura.
-					listar_I (archivo_per,aux_condicion); // muestra la lista de todos los intectados true
-					close (archivo_per); // Cierra el archivo
-					writeln ('');
-					writeln ('Presione un tecla para volver al menu.');
-					readkey;
-				end;
-			'4': begin
-					clrscr; // Limpia la pantalla
+					clrscr; 
 					writeln ('Ingrese el codigo de Provincia');
 					writeln ('');
-					assign(archivo_est, ruta_Est); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
-					reset(archivo_est); // reset: abre un fichero para lectura.
+					assign(archivo_est, ruta_Est); 
+					reset(archivo_est); 
 					listar_estancias(archivo_est); // Procedimiento para listar las provincias en forma horizontal
 					writeln ('');
-					readln (codigo_estancia);
-					buscar_registro_est (archivo_est,registro_est,codigo_estancia,encontrado,ubicacion); // Busca a la provincia si está 
-					mostrar_en_carga (archivo_est,registro_est,codigo_estancia,ubicacion,aux_denominacion); // Devuelve la denominación
-					cerrar_archivo_est (archivo_est); // Cierra el archivo
-					assign(archivo_per, ruta_Per); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
-					reset(archivo_per); // reset: abre un fichero para lectura.
-					listar_i_estancias(archivo_per,codigo_estancia,aux_denominacion); // Procedimiento que lista pacientes por provincia
-					close (archivo_per); // Cierra el archivo
+					readln (codigo_provincia);
+					buscar_registro_est (archivo_est,registro_est,codigo_provincia,encontrado,ubicacion); // Busca a la estancia si está 
+					mostrar_en_carga (archivo_est,registro_est,codigo_provincia,ubicacion,aux_denominacion); // Devuelve la denominación
+					cerrar_archivo_est (archivo_est); 
+					assign(archivo_per, ruta_Per); 
+					reset(archivo_per); 
+					listar_i_estancias(archivo_per,codigo_provincia,aux_denominacion); 
+					close (archivo_per); 
 					writeln ('');
 					writeln ('Presione un tecla para volver al menu.');
 					readkey;
 				end;
-			'5': begin // Salir del Menu, vuelve al menu principal
+			'4': begin // Salir del Menu, vuelve al menu principal
 				end;
 			else
 				begin
-					clrscr; // Limpia la pantalla
+					clrscr; 
 					writeln ('Ingreso una opcion incorrecta, pulse una tecla para continuar');
 					readkey;
 				end;
 			end;
-	until (opcion= '5');
+	until (opcion= '4');
 end;
 
 begin

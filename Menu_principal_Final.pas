@@ -1,14 +1,13 @@
 unit Menu_principal_Final;
-{$codepage utf8}
 
-interface // Parte pública, que se comparte
+interface 
 
 uses 
-	wincrt,crt,graph,Fecha_Final;
+	wincrt,crt,graph;
 
 procedure Menu_principal (var opc:char);
 
-implementation // Parte privada de la unit
+implementation 
 
 var
 	drive,modo:integer;
@@ -20,48 +19,62 @@ begin
 end;
 
 procedure menu_principal (var opc:char);
-var
-	hoy:string;
 begin
 	initgrafico; // Procedimiento para abrir la parte gráfica
-	setcolor (3); // Cambia el color de los gráficos
-	Rectangle (5,5,805,255); // Forma un rectángulo
-	Rectangle (6,6,804,254); // Forma un rectángulo
-	Rectangle (7,7,803,253); // Forma un rectángulo
-	Rectangle (8,8,802,252); // Forma un rectángulo
-	Rectangle (9,9,801,251); // Forma un rectángulo
-	Rectangle (10,10,800,250); // Forma un rectángulo
-	line (10,50,800,50); // Forma una línea
-	line (10,51,800,51); // Forma una línea
-	line (10,52,800,52); // Forma una línea
-	line (10,83,800,83); // Forma una línea
-	line (10,84,800,84); // Forma una línea
-	line (10,85,800,85); // Forma una línea
-	setcolor (9); // Cambia el color de los gráficos
-	SetTextStyle (2,0,2); // Cambia la forma y tamaño de la letra
-	OutTextXY (50,22,'Sistema Estadistico de Estancias'); // Posiciona a que distancia del margen Izquierdo y a que altura comienza el texto
+	setcolor (3); 
+	Rectangle (5,5,805,255); 
+	Rectangle (6,6,804,254); 
+	Rectangle (7,7,803,253); 
+	Rectangle (8,8,802,252); 
+	Rectangle (9,9,801,251); 
+	Rectangle (10,10,800,250); 
+	line (10,50,800,50); 
+	line (10,51,800,51); 
+	line (10,52,800,52); 
+	line (10,83,800,83); 
+	line (10,84,800,84); 
+	line (10,85,800,85); 
+	setcolor (9); 
+	SetTextStyle (2,0,2); 
+	OutTextXY (50,22,'Sistema Estadistico de Estancias'); 
 	OutTextXY (110,60,'Elija una de las opciones del menu');
-	setcolor (10); // Cambia el color de los gráficos
-	OutTextXY (20,100,'1 - Turistas - Alta/Baja/Modificacion/Consulta');
-	OutTextXY (20,130,'2 - Listados');
-	OutTextXY (20,160,'3 - Estadistica');
-	OutTextXY (20,190,'4 - Configuracion');
-	setcolor (4); // Cambia el color de los gráficos
-	OutTextXY (20,220,'5 - Salir');
+	setcolor (10); 
+	OutTextXY (20,100,'1 - Alta/Modificacion de Provincia');
+	//OutTextXY (20,130,'2 - Listados');
+	OutTextXY (20,160,'2 - Alta/Baja/Modif/Cons de Dueno de estancia');
+	setcolor (4); 
+	OutTextXY (20,220,'0 - Salir');
+	OutTextXY (20,325,'FUNDAMENTOS'); 
+	OutTextXY (220,325,'DE');
+	OutTextXY (250,325,'PROGRAMACION');
+	SetTextStyle (6,0,2); 
+	setcolor (7); 
+	OutTextXY (20,375,'LICENCIATURA EN SISTEMAS DE INFORMACION');
+	setcolor (7); 
+	SetTextStyle (5,0,2); 
+	OutTextXY (20,425,'DOCENTES:');
+	OutTextXY (180,425,'ING. ROSSANA SOSA ZITTO');
+	OutTextXY (180,450,'LIC. JULIAN ESCALANTE');
+	setcolor (5); 
+	SetTextStyle (5,0,2); 
+	OutTextXY (20,500,'ALUMNO:');
+	OutTextXY (150,500,'ESCAR CAMILO');
+	SetTextStyle (5,0,2);
+	setcolor (6); 
+	OutTextXY (225,550,'TELEFONO DE CONTACTO MINISTERIO DE TURISMO C.DEL.U:');
+	OutTextXY (1050,550,'03442 42-5820');
+	SetTextStyle (5,0,2);  
+	setcolor (1); 
 
-	setcolor (9); // Cambia el color de los gráficos
-	fecha_de_hoy (hoy); // llama al procedimiento de la unit Fecha_BacKGaMmon
-	OutTextXY (20,270,hoy);
-
-	opc:=readkey; // Toma la opción con solo teclear 
-	if opc in ['1'..'5'] then // si la opción está en el conjunto correcta
+	opc:=readkey; 
+	if opc in ['1'..'2'] then // si la opción está en el conjunto correcta
 		else // si la opción NO está en el conjunto correcta
 			begin
-				setcolor (9); // Cambia el color de los gráficos
+				setcolor (9); 
 				OutTextXY (20,300,'Opcion incorrecta');
-				delay (2000) // Lapso de Reloj
+				delay (2000) 
 			end;
-	closegraph; // Cierra el modo gráfico
+	closegraph; 
 end;
 
 begin

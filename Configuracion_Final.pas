@@ -1,51 +1,43 @@
 unit Configuracion_Final;
-{$codepage utf8}
 
-interface // Parte pública, que se comparte
+interface 
 
 uses 
 	crt;
 
 const
-	ruta_Est='Estancias.dat';
+	ruta_P='provincias.dat';
 
 type
 
-	Estancias = record
-		codigo_estancia:byte;
+	provincias = record
+		codigo_provincia:byte;
 		denominacion:string[30];
-		pileta:string[30];
+		telefono:string[13]; 
 	end;
 
-fichero_est= file of Estancias;
+fichero_P= file of provincias;
 
 var
-	archivo_est:fichero_est;
-	registro_est:Estancias;
+	archivo_P:fichero_P;
+	registro_P:provincias;
 
 procedure crear_archivo(var archivo:file; ruta_archivo:string);
 procedure menu_configuracion;
-procedure listar_estancias(var arch:fichero_est);
-procedure cerrar_archivo_est(var arch:fichero_est);
-procedure listar_est(var arch:fichero_est);
-procedure mostrar_en_carga (var arch:fichero_est; reg:estancias; cod_estancia:byte; ubi:integer;var aux_denominacion:string);
-procedure buscar_registro_est (var arch:fichero_est; reg:estancias; cod_estancia:byte; var encont:boolean; var ubic:integer);
-
-implementation // Parte privada de la unit
-
+procedure listar_provincias(var arch:fichero_P);
+procedure cerrar_archivo_P(var arch:fichero_P);
+procedure mostrar_en_carga (var arch:fichero_P; reg:provincias; cod_prov:byte; ubi:integer;var aux_denominacion:string);
+procedure buscar_registro_P (var arch:fichero_P; reg:provincias; cod_prov:byte; var encont:boolean; var ubic:integer);
+implementation 
 // Procedimiento que crea la plantilla a mostrar
-procedure plantilla_estancia;
+procedure plantilla_provincia;
 begin
 	TextColor (7);
-	TextBackground (3);
-			//         1         2         3         4         5         6
-			//123456789012345678901234567890123456789012345678901234567890
+	//TextBackground (3);
 	writeln ('-------------------------------------------------------');//01
-	writeln ('-    - Estancias                       - Pileta       -');//02
-	writeln ('-------------------------------------------------------');//03
-	writeln ('-    -                                 -              -');//03
+	writeln ('-N  	  -provincias       			-Telefono 	     ');//02
+	writeln ('                                                       ');//03
 end;
-
 // Procedimiento para crear el archivo de provincias
 procedure crear_archivo(var archivo:file; ruta_archivo:string);
 begin
@@ -66,107 +58,113 @@ begin
 end;
 
 // Procedimiento para abrir el archivo
-procedure abrir_archivo_est (var arch:fichero_est);
+procedure abrir_archivo_P (var arch:fichero_P);
 begin
-	assign(arch, ruta_Est); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
+	assign(arch, ruta_P); // assign: es la orden que se encarga de asignar un nombre físico al fichero que acabamos de declarar.
 	reset(arch); // reset: abre un fichero para lectura.
 end;
 
 // Procedimiento para cerrar el archivo
-procedure cerrar_archivo_est(var arch:fichero_est);
+procedure cerrar_archivo_P(var arch:fichero_P);
 begin
 	close(arch); // cierra el archivo
 end;
 
 // Procedimiento para guardar un registro ingresado
-procedure guardar_registro_est(var arch:fichero_est;reg:estancias);
+procedure guardar_registro_P(var arch:fichero_P;reg:provincias);
 begin
 	seek(arch,filesize(arch)); // Se posiciona en la última posición del registro
 	write(arch,reg); // Escribe al archivo
 end;
 
 // Procedimiento para mostrar los registros
-procedure mostrar_registro_est(reg:estancias);
+procedure mostrar_registro_P(reg:provincias);
 begin
-	gotoxy (1,3+reg.codigo_estancia);
+	gotoxy (1,3+reg.codigo_provincia);
 	writeln ('-    -                                 -              -');
-	gotoxy (3,3+reg.codigo_estancia);
-	writeln(reg.codigo_estancia);
-	gotoxy (8,3+reg.codigo_estancia);
+	gotoxy (3,3+reg.codigo_provincia);
+	writeln(reg.codigo_provincia);
+	gotoxy (8,3+reg.codigo_provincia);
 	writeln(reg.denominacion);
-
+	gotoxy (42,3+reg.codigo_provincia);
+	writeln(reg.telefono);
 end;
 
 // Procedimiento para modificar un registro
-procedure modificar_registro_est (var reg:estancias;ubi:integer);
+procedure modificar_registro_P (var reg:provincias;ubi:integer);
 begin
 	gotoxy(1,10);
-	writeln ('Ingrese el dueño de la  estancia              ');
+	writeln ('Ingrese el Codigo de la  Provincia              ');
 	gotoxy (3,6);
-	readln (reg.codigo_estancia);
+	readln (reg.codigo_provincia);
 	gotoxy(1,10);
-	writeln ('Ingrese Nombre de la Estancia                   ');
+	writeln ('Ingrese Nombre de la Provincia                  ');
 	gotoxy(8,6);
 	readln(reg.denominacion);
 	gotoxy(1,10);
-	seek(archivo_est,ubi); // Se posiciona en el registro con posición ubi
-	write(archivo_est,reg); // sobreescribe el registro
+	writeln ('Ingrese el numero de telefono                   ');
+	gotoxy(42,6);
+	readln(reg.telefono);
+	seek(archivo_P,ubi); // Se posiciona en el registro con posición ubi
+	write(archivo_P,reg); // sobreescribe el registro
 end;
 
 // Procedimiento que al ingresar el cod devuelve la denominación de la provincia
-procedure mostrar_en_carga (var arch:fichero_est; reg:estancias; cod_estancia:byte; ubi:integer;var aux_denominacion:string);
+procedure mostrar_en_carga (var arch:fichero_P; reg:provincias; cod_prov:byte; ubi:integer;var aux_denominacion:string);
 begin
 	seek (arch,ubi); // Se posiciona en el registro con posición ubi
 	read (arch,reg); // lee el archivo
-	if cod_estancia=reg.codigo_estancia then
+	if cod_prov=reg.codigo_provincia then
 		aux_denominacion:=reg.denominacion;
 end;
 
 // Procedimiento para mostrar el registro buscado
-procedure mostrar_buscado_est (var arch:fichero_est; reg:estancias; cod_est:byte; ubi:integer);
+procedure mostrar_buscado_P (var arch:fichero_P; reg:provincias; cod_prov:byte; ubi:integer);
 begin
 	seek (arch,ubi); // Se posiciona en el registro con posición ubi
 	read (arch,reg); // lee el archivo
-	if cod_est=reg.codigo_estancia then
+	if cod_prov=reg.codigo_provincia then
 		begin
 			gotoxy (3,4);
-			writeln(reg.codigo_estancia);
+			writeln(reg.codigo_provincia);
 			gotoxy (8,4);
 			writeln(reg.denominacion);
+			gotoxy (42,4);
+			writeln(reg.telefono);
 		end;
 end;
 
 // Procedimiento para listar las provincias
-procedure listar_est(var arch:fichero_est);
+procedure listar_P(var arch:fichero_P);
 var
-	reg:estancias;
+	reg:provincias;
 begin
 	clrscr;
-	plantilla_estancia; // Procedimiento para dibujar la plantilla
+	plantilla_provincia; // Procedimiento para dibujar la plantilla
 	reset(arch);
 	while not (eof(arch)) do
 		begin
 			read (arch,reg);
-			mostrar_registro_est(reg); // Procedimiento para para mostrar cada registro
+			mostrar_registro_P(reg); // Procedimiento para para mostrar cada registro
 		end;
 end;
 
 // Procedimiento para leer los registros del archivo
-procedure leer_registro_est(var arch:fichero_est; var reg:estancias; pos:integer);
+procedure leer_registro_P(var arch:fichero_P; var reg:provincias; pos:integer);
 begin
 	seek(arch,pos);
 	read(arch,reg);
 end;
 
 // Procedimiento busca si cod está ingresado y devuelve la ubicación
-procedure buscar_registro_est (var arch:fichero_est; reg:estancias; cod_estancia:byte; var encont:boolean; var ubic:integer);
+procedure buscar_registro_P (var arch:fichero_P; reg:provincias; cod_prov:byte; var encont:boolean; var ubic:integer);
 var
 	i: integer;
 begin
 for i:=0 to filesize(arch)-1 do
 	begin
-		leer_registro_est (arch,reg,i); // Procedimiento para leer los registros del archivo
-		if cod_estancia=reg.codigo_estancia then
+		leer_registro_P (arch,reg,i); // Procedimiento para leer los registros del archivo
+		if cod_prov=reg.codigo_provincia then
 			Begin
 				encont:=true;
 				ubic:=i;
@@ -175,15 +173,15 @@ for i:=0 to filesize(arch)-1 do
 end;
 
 // Procedimiento para mostrar las provincias pero en forma horizontal
-procedure mostrar_registro_estancias(reg:estancias);
+procedure mostrar_registro_provincias(reg:provincias);
 begin
-	write(reg.codigo_estancia,'-',reg.denominacion,'  ');
+	write(reg.codigo_provincia,'-',reg.denominacion,'  ');
 end;
 
 // Procedimiento para listar las provincias
-procedure listar_estancias(var arch:fichero_est);
+procedure listar_provincias(var arch:fichero_P);
 var
-	reg:estancias;
+	reg:provincias;
 	i:byte;
 begin
 	i:=0;
@@ -197,39 +195,41 @@ begin
 					i:=0;
 				end;
 			inc(i);
-			mostrar_registro_estancias(reg); // Procedimiento para mostrar las provincias pero en forma horizontal 
+			mostrar_registro_provincias(reg); // Procedimiento para mostrar las provincias pero en forma horizontal 
 		end;
 end;
 
 // Procedimiento para cargar las provincias
-procedure cargar_registro_est(var reg:estancias);
+procedure cargar_registro_P(var reg:provincias);
 begin
 	clrscr; // Limpia la pantalla
-	plantilla_estancia; // llama al procedimiento para dibujar la plantilla
+	plantilla_provincia; // llama al procedimiento para dibujar la plantilla
 	TextColor (10); // Cambia color de Texto
 	gotoxy(1,26);
-	listar_est (archivo_est); // llama al procedimiento listar y muestra las provincias ya ingresadas
+	listar_P (archivo_P); // llama al procedimiento listar y muestra las provincias ya ingresadas
 	with reg do
 		begin
-			codigo_estancia:= filesize(archivo_est)+1;
-			gotoxy(3,3+codigo_estancia);
-			gotoxy(1,3+codigo_estancia);
+			codigo_provincia:= filesize(archivo_P)+1;
+			gotoxy(3,3+codigo_provincia);
+			gotoxy(1,3+codigo_provincia);
 			writeln ('-    -                                 -              -');
-			gotoxy(3,3+codigo_estancia);
-			writeln (codigo_estancia);
+			gotoxy(3,3+codigo_provincia);
+			writeln (codigo_provincia);
 			gotoxy(1,29);
-			writeln ('Ingrese Nombre de la Estancia                  ');
-			gotoxy(8,3+codigo_estancia);
+			writeln ('Ingrese Nombre de la Provincia                  ');
+			gotoxy(8,3+codigo_provincia);
 			readln(denominacion);
 			gotoxy(1,29);
-
+			writeln ('Ingrese el numero de telefono                   ');
+			gotoxy(42,3+codigo_provincia);
+			readln(telefono);
 		end;
 end;
 
 // Procedimiento para ordenar las provincias en forma alfabética
-procedure orden_burbuja_est (var arch:fichero_est);
+procedure orden_burbuja_P (var arch:fichero_P);
 var 
-	reg1,reg2:estancias;
+	reg1,reg2:provincias;
 	lim,i,j:integer;
 begin
 
@@ -255,16 +255,16 @@ end;
 procedure menu_configuracion;
 var
 	opcion,seguir:char;
-	aux_estancia:byte;
+	aux_provincia:byte;
 	ubicacion:integer;
 	encontrado:boolean;
 begin
-	abrir_archivo_est (archivo_est); // abre el archivo
-	orden_burbuja_est (archivo_est); // ordenda los registros por abecedario
-	cerrar_archivo_est (archivo_est); // cierra el archivo
+	abrir_archivo_P (archivo_P); // abre el archivo
+	orden_burbuja_P (archivo_P); // ordenda los registros por abecedario
+	cerrar_archivo_P (archivo_P); // cierra el archivo
 
 	TextColor(7); // Cambia color de Texto
-	TextBackground(3); // Cambia color de Fondo
+	//TextBackground(3); // Cambia color de Fondo
 	repeat
 		ubicacion:=-1;
 		encontrado:=false;
@@ -272,10 +272,10 @@ begin
 		writeln ('------------------------------------------');
 		writeln ('-          menu configuracion            -');
 		writeln ('------------------------------------------');
-		writeln ('- Elija una opción                       -');
+		writeln ('- Elija una opcion                       -');
 		writeln ('------------------------------------------');
-		writeln ('- 1 - Alta Estancia                      -');
-		writeln ('- 2 - Modificar Estancia                 -');
+		writeln ('- 1 - Alta Provincias                    -');
+		writeln ('- 2 - Modificar Provincias               -');
 		writeln ('------------------------------------------');
 		writeln ('- 3 - Volver al Menu Principal           -');
 		writeln ('------------------------------------------');
@@ -283,40 +283,40 @@ begin
 		Case opcion of
 			'1': begin // Opción que muestra las provincias 
 					repeat
-						abrir_archivo_est (archivo_est); // abre el archivo
-						cargar_registro_est (registro_est); // Carga los datos de un registro
-						guardar_registro_est (archivo_est,registro_est); // Guarda el registro
-						cerrar_archivo_est (archivo_est); // cierra el archivo
+						abrir_archivo_P (archivo_P); // abre el archivo
+						cargar_registro_P (registro_P); // Carga los datos de un registro
+						guardar_registro_P (archivo_P,registro_P); // Guarda el registro
+						cerrar_archivo_P (archivo_P); // cierra el archivo
 						gotoxy(1,29) ;
-						writeln ('desea ingresar otra estancia (S/N)');
+						writeln ('desea ingresar otra provincia (S/N)');
 						seguir:=readkey; // Toma la opción con solo teclear 
 						seguir:=upcase(seguir); // Pasa a mayúscula
 					until seguir <> 'S';
 				end;
 			'2':begin // opción para modificar una provincia
 					clrscr; // Limpia la pantalla
-					plantilla_estancia; // Procedimiento para dibujar la plantilla
-					abrir_archivo_est (archivo_est); // Abre el archivo de provincias
-					listar_est (archivo_est); // muestra la lista de provincias
+					plantilla_provincia; // Procedimiento para dibujar la plantilla
+					abrir_archivo_P (archivo_P); // Abre el archivo de provincias
+					listar_P (archivo_P); // muestra la lista de provincias
 					writeln ('');
-					writeln ('Elija la estancia a modificar.');
-					readln (aux_estancia);
+					writeln ('Elija la provincia a modificar.');
+					readln (aux_provincia);
 					clrscr; // Limpia la pantalla
-					buscar_registro_est (archivo_est,registro_est,aux_estancia,encontrado,ubicacion); // busca si está la provincia
+					buscar_registro_P (archivo_P,registro_P,aux_provincia,encontrado,ubicacion); // busca si está la provincia
 					if encontrado then
 						begin
-							plantilla_estancia; // Procedimiento para dibujar la plantilla
-							mostrar_buscado_est (archivo_est,registro_est,aux_estancia,ubicacion); // muestra la provincia buscada
+							plantilla_provincia; // Procedimiento para dibujar la plantilla
+							mostrar_buscado_P (archivo_P,registro_P,aux_provincia,ubicacion); // muestra la provincia buscada
 							gotoxy(1,10);
-							writeln ('quiere modificar esta estancia (S/N)');
+							writeln ('quiere modificar esta provincia (S/N)');
 							seguir:= readkey; // Toma la opción con solo teclear 
 							seguir:=upcase(seguir); // Pasa a mayúscula
 							if seguir='S' then
 								begin
-									modificar_registro_est (registro_est,ubicacion); // Procedimiento para modificar un registro
+									modificar_registro_P (registro_P,ubicacion); // Procedimiento para modificar un registro
 								end;
 						end;
-					cerrar_archivo_est (archivo_est); // cierra el archivo
+					cerrar_archivo_P (archivo_P); // cierra el archivo
 				end;
 			'3': begin // Salir del Menu, vuelve al menu principal
 				end;
